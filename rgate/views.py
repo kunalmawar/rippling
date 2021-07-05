@@ -5,7 +5,7 @@ import redis
 import string
 import time
 from django.http import JsonResponse
-from django.conf.global_settings import BACKENDS, DEFAULT_ERROR_CODE, DEFAULT_ERROR_MESSAGE
+from django.conf import settings
 
 cache = redis.Redis(host='127.0.0.1', port=6379)
 
@@ -36,9 +36,9 @@ def default_view(request):
     else:
         # current url is not in backends: throw error
         url = 'http://127.0.0.1:9001' + url
-        if url not in BACKENDS.values():
+        if url not in settings.BACKENDS.values():
             cache.incr('error')
-            return JsonResponse({'message': DEFAULT_ERROR_MESSAGE}, status=DEFAULT_ERROR_CODE)
+            return JsonResponse({'message': settings.DEFAULT_ERROR_MESSAGE}, status=settings.DEFAULT_ERROR_CODE)
         
         try:
             start_time = time.time()
